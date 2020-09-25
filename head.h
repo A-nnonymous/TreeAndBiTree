@@ -31,8 +31,15 @@ typedef struct TBiNode {
 	TBiNode* lchild; TBiNode* rchild;
 }TBiNode;
 
+/*--------SQUEUE node----------------*/
+typedef struct squeue
+{
+	BiNode* queue[MAXSIZE];
+	int front; int rear;
+}squeue;
+
 /*-----------Method designing-------------------------*/
-/*------------------Traversing-------------------*/
+/*------------------binary tree-------------------*/
 
 /*---------Recursion traverse----------*/
 void BiTraverseIn(BiNode* node)
@@ -179,6 +186,53 @@ void postThread(TBiNode* node, TBiNode*& pre)
 			pre->rchild = node;
 		}
 		pre = node;
+	}
+}
+
+/*-----------------queue and level-----------------*/
+int isQueueEmpty(squeue* q)
+{
+	if (q->front == q->rear)
+	{
+		return true;
+	}
+	else return false;
+}
+int isQueueFull(squeue* q)
+{
+	if ((q->rear + 1) % MAXSIZE == q->front) return true;
+	return false;
+}
+int enQueue(squeue*& q, BiNode* node)
+{
+	if (isQueueFull(q))return false;
+	q->queue[q->rear] = node;
+	q->rear = (q->rear + 1) % MAXSIZE;
+	return true;
+}
+int deQueue(squeue*& q, BiNode*& node)
+{
+	if (isQueueEmpty(q))return false;
+	node = q->queue[q->front];
+	q->front = (q->front + 1) % MAXSIZE;
+	return true;
+}
+void init_queue(squeue*& q)
+{
+	q = new squeue;
+	q->front = 0; q->rear = 0;
+}
+void LevelOrder(BiNode* head)
+{
+	squeue* node_queue; BiNode* p = new BiNode;
+	init_queue(node_queue);
+	enQueue(node_queue, head);
+	while (!isQueueEmpty(node_queue))
+	{
+		deQueue(node_queue, p);
+		cout << p->data;
+		if (p->lchild)enQueue(node_queue, p->lchild);
+		if (p->rchild)enQueue(node_queue, p->rchild);
 	}
 }
 /*-----------Test Zone--------------------------------*/
